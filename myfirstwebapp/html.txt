@@ -1,0 +1,20 @@
+
+```
+<html>
+	<head>	
+		<title> My first HTML page</title>
+	</head>
+	<body>
+		My first html page with body
+	</body>
+</html>
+```
+
+## JSP
+
+/src/main/resources/META-INF/resources/WEB-INF/jsp/sayHello.jsp
+
+/say-hello-jsp => SayHelloController - sayHelloJsp method 
+=> return sayHello (name of jsp)
+
+view resorver -> set prefix and suffix - /WEB-INF/jsp/sayHello.jsp
