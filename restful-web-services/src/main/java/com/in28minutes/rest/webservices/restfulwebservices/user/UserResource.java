@@ -1,8 +1,11 @@
 package com.in28minutes.rest.webservices.restfulwebservices.user;
 
+import jakarta.servlet.Servlet;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -26,8 +29,11 @@ public class UserResource {
 
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@RequestBody User user){
-        service.save(user);
-        // location header -> return /users/4
-        return ResponseEntity.created(null).build();
+        User savedUser = service.save(user);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedUser.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 }
