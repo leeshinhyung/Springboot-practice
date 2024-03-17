@@ -1,6 +1,10 @@
 package com.in28minutes.rest.webservices.restfulwebservices.user;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import jakarta.servlet.Servlet;
+import jakarta.validation.Valid;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,12 +27,25 @@ public class UserResource {
     }
 
     @GetMapping("/users/{id}")
-    public User retrieveUsers(@PathVariable int id){
-        return service.findOne(id);
+    public EntityModel<User> retrieveUsers(@PathVariable int id){
+        User user = service.findOne(id);
+        if(user==null)
+            throw new UserNotFoundException("id:" +id);
+
+        EntityModel<User> entityModel = EntityModel.of(user);
+
+        WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+        entityModel.add(link.withRel("all-users"));
+        return entityModel;
+    }
+
+    @DeleteMapping("/users/{id}")
+    public void deleteUsers(@PathVariable int id){
+        service.deleteById(id);
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Object> createUser(@RequestBody User user){
+    public ResponseEntity<Object> createUser(@Valid @RequestBody User user){
         User savedUser = service.save(user);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
